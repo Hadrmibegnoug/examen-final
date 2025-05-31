@@ -1,0 +1,35 @@
+name: Log Analyzer CI
+
+on:
+  push:
+    branches:
+      - main
+      - dev
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: 📥 Checkout repository
+      uses: actions/checkout@v3
+
+    - name: 🐍 Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: 📦 Install dependencies (if any)
+      run: |
+        pip install -r requirements.txt || echo "No requirements to install"
+
+    - name: ▶️ Run the script
+      run: |
+        python main.py --log log.txt --output rapport.txt
+
+    - name: ✅ Check if report was created
+      run: |
+        test -f rapport.txt && echo "rapport.txt found!" || (echo "rapport.txt missing!" && exit 1)
